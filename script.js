@@ -52,9 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const prevBtn = document.querySelector(".next img:first-child");
   const nextBtn = document.querySelector(".next img:last-child");
 
-  /* =====================================================
-     3️⃣ MODEL LIST (NO PRELOAD, NO PRIORITY)
-     👉 index 0 ALWAYS loads first
+/* =====================================================
+     3️⃣ MODEL LIST WITH LAZY LOADING
+     👉 Only load models when user requests them
   ===================================================== */
   const MODELS = [
     "./model/headphone.glb", // ONLY this loads on page load
@@ -64,11 +64,20 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   let currentModelIndex = 0;
+  const loadedModels = new Set([0]); // Track which models are loaded
 
   function loadModel(index) {
+    // Show loading state
+    modelViewer.classList.add('loading');
+    
     modelViewer.setAttribute("src", MODELS[index]);
+    loadedModels.add(index);
+    
+    // Remove loading state when model loads
+    modelViewer.addEventListener('load', () => {
+      modelViewer.classList.remove('loading');
+    }, { once: true });
   }
-
   /* =====================================================
      4️⃣ MODEL SWITCHING (ON-DEMAND ONLY)
   ===================================================== */
