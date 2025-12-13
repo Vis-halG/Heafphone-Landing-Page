@@ -9,8 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let testimonialIndex = 0;
 
-  if (cards.length > 0 && track && testimonialsRight) {
-
+  if (cards.length && track && testimonialsRight) {
     const cardHeightWithMargin = cards[0].offsetHeight + 16;
     const containerHeight = testimonialsRight.clientHeight;
     const cardHeight = cards[0].offsetHeight;
@@ -18,12 +17,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateTestimonialSlider() {
       const translateY =
-        initialOffset - (testimonialIndex * cardHeightWithMargin);
+        initialOffset - testimonialIndex * cardHeightWithMargin;
       track.style.transform = `translateY(${translateY}px)`;
 
-      cards.forEach((card, i) => {
-        card.classList.toggle("active", i === testimonialIndex);
-      });
+      cards.forEach((card, i) =>
+        card.classList.toggle("active", i === testimonialIndex)
+      );
     }
 
     updateTestimonialSlider();
@@ -44,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* =====================================================
-     2️⃣ MODEL VIEWER SETUP
+     2️⃣ MODEL VIEWER SETUP (ONLY HERO LOADS)
   ===================================================== */
   const modelViewer = document.querySelector(".showcase__model");
   const title = document.querySelector(".title");
@@ -54,111 +53,40 @@ document.addEventListener("DOMContentLoaded", () => {
   const nextBtn = document.querySelector(".next img:last-child");
 
   /* =====================================================
-     3️⃣ MODEL PRIORITY LIST
+     3️⃣ MODEL LIST (NO PRELOAD, NO PRIORITY)
+     👉 index 0 ALWAYS loads first
   ===================================================== */
-  const MODEL_PRIORITY = {
-    immediate: ["./model/headphone.glb"],
+  const MODELS = [
+    "./model/headphone.glb", // ONLY this loads on page load
+    "./model/h1.glb",
+    "./model/h2.glb",
+    "./model/h3.glb",
+    "./model/h4.glb"
+  ];
 
-    high: [
-      "./model/h1.glb",
-      "./model/h2.glb"
-    ],
-
-    medium: [
-      "./model/h3.glb",
-      "./model/h4.glb",
-      "./model/h5.glb"
-    ],
-
-    low: [
-      "./model/h6.glb",
-      "./model/h7.glb",
-      "./model/h8.glb"
-    ],
-
-    ondemand: [
-      "./model/h9.glb",
-      "./model/h10.glb",
-      "./model/h11.glb",
-      "./model/h12.glb",
-      "./model/h14.glb"
-    ]
-  };
-
-  const ALL_MODELS = Object.values(MODEL_PRIORITY).flat();
   let currentModelIndex = 0;
 
-  /* =====================================================
-     4️⃣ MODEL PRELOAD FUNCTION
-  ===================================================== */
-  function preloadModel(src) {
-    const link = document.createElement("link");
-    link.rel = "preload";
-    link.as = "fetch";
-    link.href = src;
-    link.crossOrigin = "anonymous";
-    document.head.appendChild(link);
-  }
-
-  /* =====================================================
-     5️⃣ APPLY PRIORITY PRELOADING
-  ===================================================== */
-  // Immediate (Hero)
-  MODEL_PRIORITY.immediate.forEach(preloadModel);
-
-  // High priority after page load
-  window.addEventListener("load", () => {
-    MODEL_PRIORITY.high.forEach(preloadModel);
-  });
-
-  // Medium priority during idle time
-  if ("requestIdleCallback" in window) {
-    requestIdleCallback(() => {
-      MODEL_PRIORITY.medium.forEach(preloadModel);
-    });
-  } else {
-    setTimeout(() => {
-      MODEL_PRIORITY.medium.forEach(preloadModel);
-    }, 2000);
-  }
-
-  // On-demand (deep users)
-  let ondemandLoaded = false;
-  function loadOnDemandModels() {
-    if (ondemandLoaded) return;
-    ondemandLoaded = true;
-    MODEL_PRIORITY.ondemand.forEach(preloadModel);
-  }
-
-  /* =====================================================
-     6️⃣ MODEL SWITCHING (ARROWS)
-  ===================================================== */
   function loadModel(index) {
-    modelViewer.setAttribute("src", ALL_MODELS[index]);
+    modelViewer.setAttribute("src", MODELS[index]);
   }
 
-  let interactionCount = 0;
-
+  /* =====================================================
+     4️⃣ MODEL SWITCHING (ON-DEMAND ONLY)
+  ===================================================== */
   prevBtn?.addEventListener("click", () => {
     currentModelIndex =
-      (currentModelIndex - 1 + ALL_MODELS.length) % ALL_MODELS.length;
+      (currentModelIndex - 1 + MODELS.length) % MODELS.length;
     loadModel(currentModelIndex);
-
-    interactionCount++;
-    if (interactionCount === 5) loadOnDemandModels();
   });
 
   nextBtn?.addEventListener("click", () => {
     currentModelIndex =
-      (currentModelIndex + 1) % ALL_MODELS.length;
+      (currentModelIndex + 1) % MODELS.length;
     loadModel(currentModelIndex);
-
-    interactionCount++;
-    if (interactionCount === 5) loadOnDemandModels();
   });
 
   /* =====================================================
-     7️⃣ RADIO → EXPOSURE + TITLE COLOR
+     5️⃣ RADIO → EXPOSURE + TITLE COLOR
   ===================================================== */
   title.style.transition = "color 0.4s ease";
 
@@ -167,17 +95,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const value = radio.value;
       modelViewer.setAttribute("exposure", value);
 
-      switch (value) {
-        case "1":
-          title.style.color = "#ffffff";
-          break;
-        case "12":
-          title.style.color = "#3c3c3c";
-          break;
-        case "6":
-          title.style.color = "#282828";
-          break;
-      }
+      if (value === "1") title.style.color = "#ffffff";
+      if (value === "12") title.style.color = "#3c3c3c";
+      if (value === "6") title.style.color = "#282828";
     });
   });
 
@@ -185,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 /* =====================================================
-   8️⃣ PRODUCT BANNER THUMB SWITCH
+   6️⃣ PRODUCT BANNER THUMB SWITCH
 ===================================================== */
 const bannerBg = document.getElementById("bannerBg");
 const thumbs = document.querySelectorAll(".thumb");
@@ -195,7 +115,6 @@ thumbs.forEach(thumb => {
     thumbs.forEach(t => t.classList.remove("active"));
     thumb.classList.add("active");
 
-    const img = thumb.dataset.img;
-    bannerBg.style.backgroundImage = `url(${img})`;
+    bannerBg.style.backgroundImage = `url(${thumb.dataset.img})`;
   });
 });
