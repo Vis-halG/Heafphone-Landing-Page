@@ -60,8 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "./model/headphone.glb", // ONLY this loads on page load
     "./model/h1.glb",
     "./model/h2.glb",
-    "./model/h3.glb",
-    "./model/h4.glb"
+    "./model/h3.glb"
   ];
 
   let currentModelIndex = 0;
