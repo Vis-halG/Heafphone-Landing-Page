@@ -88,8 +88,8 @@ radios.forEach(radio => {
 
     if (!title) return;
     if (value === "1") title.style.color = "#ffffff";
-    if (value === "6") title.style.color = "#282828";
-    if (value === "12") title.style.color = "#3c3c3c";
+    if (value === "12") title.style.color = "#282828";
+    if (value === "6") title.style.color = "#3c3c3c";
   });
 });
 
