@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* =====================================================
-     2️⃣ MODEL VIEWER SETUP (ONLY HERO LOADS)
+     2️⃣ MODEL VIEWER SETUP
   ===================================================== */
   const modelViewer = document.querySelector(".showcase__model");
   const title = document.querySelector(".title");
@@ -52,34 +52,74 @@ document.addEventListener("DOMContentLoaded", () => {
   const prevBtn = document.querySelector(".next img:first-child");
   const nextBtn = document.querySelector(".next img:last-child");
 
-/* =====================================================
-     3️⃣ MODEL LIST WITH LAZY LOADING
-     👉 Only load models when user requests them
+  /* =====================================================
+     3️⃣ MODEL LIST WITH SMART PRELOADING
+     👉 First model loads immediately
+     👉 Others preload in background after page loads
   ===================================================== */
   const MODELS = [
-    "./model/headphone.glb", // ONLY this loads on page load
-    "./model/h1.glb",
-    "./model/h2.glb",
-    "./model/h3.glb"
+    "./model/headphone.glb", // Loads first on page load
+    "./model/h1.glb",        // Preloads in background
+    "./model/h2.glb",        // Preloads in background
+    "./model/h3.glb"         // Preloads in background
   ];
 
   let currentModelIndex = 0;
-  const loadedModels = new Set([0]); // Track which models are loaded
+  const preloadedModels = new Set([0]); // Track which models are preloaded
 
+  // Preload models in background (non-blocking)
+  function preloadModelsInBackground() {
+    MODELS.forEach((modelPath, index) => {
+      if (index === 0) return; // Skip first model (already loading)
+      
+      // Wait a bit, then preload each model
+      setTimeout(() => {
+        const link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.as = 'fetch';
+        link.href = modelPath;
+        link.crossOrigin = 'anonymous';
+        document.head.appendChild(link);
+        
+        console.log(`🎧 Preloading model ${index + 1}:`, modelPath);
+        preloadedModels.add(index);
+      }, 1500 * index); // Stagger loads: 1.5s, 3s, 4.5s
+    });
+  }
+
+  // Load specific model
   function loadModel(index) {
-    // Show loading state
+    if (!modelViewer) return;
+    
+    // Add loading indicator
     modelViewer.classList.add('loading');
     
+    // Update model source
     modelViewer.setAttribute("src", MODELS[index]);
-    loadedModels.add(index);
     
-    // Remove loading state when model loads
+    // Remove loading indicator when done
     modelViewer.addEventListener('load', () => {
       modelViewer.classList.remove('loading');
+      console.log(`✅ Model ${index + 1} loaded`);
+    }, { once: true });
+
+    // Handle load errors
+    modelViewer.addEventListener('error', (e) => {
+      modelViewer.classList.remove('loading');
+      console.error(`❌ Failed to load model ${index + 1}:`, e);
     }, { once: true });
   }
+
+  // Start background preloading after initial page load
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      console.log('🚀 Starting background model preload...');
+      preloadModelsInBackground();
+    }, 1000); // Wait 1 second after page fully loads
+  });
+
   /* =====================================================
-     4️⃣ MODEL SWITCHING (ON-DEMAND ONLY)
+     4️⃣ MODEL SWITCHING (INSTANT - ALREADY PRELOADED)
   ===================================================== */
   prevBtn?.addEventListener("click", () => {
     currentModelIndex =
@@ -96,16 +136,22 @@ document.addEventListener("DOMContentLoaded", () => {
   /* =====================================================
      5️⃣ RADIO → EXPOSURE + TITLE COLOR
   ===================================================== */
-  title.style.transition = "color 0.4s ease";
+  if (title) {
+    title.style.transition = "color 0.4s ease";
+  }
 
   radios.forEach(radio => {
     radio.addEventListener("change", () => {
       const value = radio.value;
-      modelViewer.setAttribute("exposure", value);
+      if (modelViewer) {
+        modelViewer.setAttribute("exposure", value);
+      }
 
-      if (value === "1") title.style.color = "#ffffff";
-      if (value === "12") title.style.color = "#3c3c3c";
-      if (value === "6") title.style.color = "#282828";
+      if (title) {
+        if (value === "1") title.style.color = "#ffffff";
+        if (value === "12") title.style.color = "#3c3c3c";
+        if (value === "6") title.style.color = "#282828";
+      }
     });
   });
 
