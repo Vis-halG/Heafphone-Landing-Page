@@ -304,11 +304,13 @@ body {
   .showcase__model {
     width: 100%;
     height: 100vw;
+    margin-top: 10vw;
     /* max-height: 420px; */
   }
 
   .showCase-content {
     padding: 10vw;
+    padding-top: 0vw;
     text-align: center;
   }
  .showcase .title {
@@ -328,7 +330,8 @@ body {
 
   .showCase-switch {
   justify-content: space-around;
-    margin-bottom: 40vw;
+
+    
  
 }
 
@@ -349,19 +352,7 @@ body {
 
 .feature-box {
   
-  position: relative;
-  z-index: 10;
-  max-width: 80vw;
-  top: -40vw;
-  margin: -6vw auto 0;  
-  background: #fff;
-  border-radius: 28px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5vw;
-  box-shadow: 0 20px 45px rgba(0,0,0,0.12);
-  /* display: none; */
+  display: none;
 }
 .feature-item {
   flex-direction: column;
