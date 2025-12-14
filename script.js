@@ -141,6 +141,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+/* =====================================================
+   4️⃣ FAQ ACCORDION (FEATURES SECTION)
+===================================================== */
+
+const faqItems = document.querySelectorAll(".faq-item");
+
+faqItems.forEach(item => {
+  const header = item.querySelector(".faq-header");
+
+  header.addEventListener("click", () => {
+
+    // Close all other items
+    faqItems.forEach(other => {
+      if (other !== item) {
+        other.classList.remove("active");
+        const icon = other.querySelector(".icon");
+        if (icon) icon.textContent = "+";
+      }
+    });
+
+    // Toggle current
+    item.classList.toggle("active");
+
+    const icon = item.querySelector(".icon");
+    if (icon) {
+      icon.textContent = item.classList.contains("active") ? "−" : "+";
+    }
+  });
+});
 
 /* =====================================================
    3️⃣ PRODUCT BANNER THUMB SWITCH (LOW PRIORITY)
