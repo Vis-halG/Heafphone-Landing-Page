@@ -175,13 +175,32 @@ faqItems.forEach(item => {
    3️⃣ PRODUCT BANNER THUMB SWITCH (LOW PRIORITY)
 ===================================================== */
 
-const bannerBg = document.getElementById("bannerBg");
 const thumbs = document.querySelectorAll(".thumb");
+const modelA = document.getElementById("modelA");
+const modelB = document.getElementById("modelB");
+
+let current = modelA;
+let next = modelB;
 
 thumbs.forEach(thumb => {
   thumb.addEventListener("click", () => {
+
     thumbs.forEach(t => t.classList.remove("active"));
     thumb.classList.add("active");
-    bannerBg.style.backgroundImage = `url(${thumb.dataset.img})`;
+
+    const newSrc = thumb.dataset.model;
+
+    // Load new model into hidden layer
+    next.setAttribute("src", newSrc);
+
+    next.addEventListener("load", () => {
+      // Fade swap
+      current.classList.remove("active");
+      next.classList.add("active");
+
+      // Swap references
+      [current, next] = [next, current];
+    }, { once: true });
   });
 });
+

@@ -95,15 +95,7 @@
     <div class="product-card">
       <span class="badge">New Product</span>
 
-      <model-viewer
-        src="./model/headphone.glb"
-        camera-controls
-        auto-rotate
-        rotation-per-second="20deg"
-        exposure="1"
-        environment-image="neutral"
-        class="product-model">
-      </model-viewer>
+ <img src="images/product-3.jpg" alt="">
 
       <h3>Advanced Formula Adult</h3>
       <p class="price">From: $79.00</p>
@@ -114,15 +106,7 @@
     <div class="product-card">
       <span class="badge">New Product</span>
 
-      <model-viewer
-        src="./model/headphone.glb"
-        camera-controls
-        auto-rotate
-        rotation-per-second="20deg"
-        exposure="1.2"
-        environment-image="neutral"
-        class="product-model">
-      </model-viewer>
+     <img src="images/Headphone isolated on transparent background black headphone isolated generative ai _ Premium AI-generated PSD.png" alt="">
 
       <h3>Advanced Formula Adult</h3>
       <p class="price">From: $79.00</p>
@@ -134,15 +118,7 @@
     <div class="product-card">
       <span class="badge red">New Product</span>
 
-      <model-viewer
-        src="./model/headphone.glb"
-        camera-controls
-        auto-rotate
-        rotation-per-second="20deg"
-        exposure="1.4"
-        environment-image="neutral"
-        class="product-model">
-      </model-viewer>
+     <img src="images/product-1.jpg" alt="">
 
       <h3>Advanced Formula Adult</h3>
       <p class="price">From: $79.00</p>
@@ -521,10 +497,35 @@
 
 <section class="product-banner">
 
-  <!-- background -->
-  <div class="banner-bg" id="bannerBg"></div>
+  <!-- MODEL LAYER 1 -->
+  <model-viewer
+    id="modelA"
+    class="banner-model active"
+    src="./model/headphone.glb"
+    camera-controls
+    auto-rotate
+    rotation-per-second="18deg"
+    exposure="1"
+    environment-image="neutral"
+    disable-zoom>
+  </model-viewer>
 
-  <!-- content -->
+  <!-- MODEL LAYER 2 -->
+  <model-viewer
+    id="modelB"
+    class="banner-model"
+    camera-controls
+    auto-rotate
+    rotation-per-second="18deg"
+    exposure="1"
+    environment-image="neutral"
+    disable-zoom>
+  </model-viewer>
+
+  <!-- OVERLAY -->
+  <div class="banner-overlay"></div>
+
+  <!-- CONTENT -->
   <div class="banner-content">
     <h1>
       Your Music Deserves More<br>
@@ -534,26 +535,21 @@
     <button class="banner-btn">Shop Now</button>
   </div>
 
-  <!-- thumbnails -->
+  <!-- THUMBS -->
   <div class="banner-thumbs">
-    <div class="thumb active" data-img="images/hero-1.jpg">
-      <img src="images/latest-1.jpg" />
+    <div class="thumb active" data-model="./model/headphone.glb">
+      <img src="images/latest-1.jpg">
     </div>
-    <div class="thumb" data-img="images/hero-2.jpg">
-      <img src="images/latest-2.jpg" />
+    <div class="thumb" data-model="./model/h1.glb">
+      <img src="images/latest-2.jpg">
     </div>
-    <div class="thumb" data-img="images/hero-3.jpg">
-      <img src="images/warranty-final.svg" />
-    </div>
-    <div class="thumb" data-img="images/hero-4.jpg">
-      <img src="images/review-section.jpg" />
-    </div>
-    <div class="thumb" data-img="images/hero-5.jpg">
-      <img src="images/delivery section.jpg" />
+    <div class="thumb" data-model="./model/h2.glb">
+      <img src="images/review-section.jpg">
     </div>
   </div>
 
 </section>
+
 
 <footer class="site-footer">
   <div class="footer-inner">

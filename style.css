@@ -187,6 +187,8 @@ body {
   background: #fff;
 }
 
+
+
 .products-header {
   display: flex;
   justify-content: space-between;
@@ -221,6 +223,18 @@ body {
   box-shadow: 0 15px 35px rgba(0,0,0,0.08);
   transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
+.products img {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  display: block;
+  margin: 0 auto;   /* ← CENTER */
+  object-fit: contain;
+}
+.products img {
+  mix-blend-mode: multiply;
+}
+
 
 .product-card:hover {
   transform: translateY(-10px);
@@ -485,10 +499,12 @@ body {
   margin-right: 8px;
 }
 
-.outline-img {
-  width: 280px;
-  margin-top: 40px;
-  opacity: 0.6;
+
+.outline-img{
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  /* display: block; */
 }
 
 /* RIGHT */
@@ -950,6 +966,9 @@ body {
 .faq-item.active .icon {
   color: #000;
 }
+/* ===============================
+   PRODUCT BANNER – 3D SWITCH
+================================ */
 
 .product-banner {
   position: relative;
@@ -957,45 +976,49 @@ body {
   height: 85vh;
   border-radius: 28px;
   overflow: hidden;
+  background: #ffffff;
 }
 
-/* background */
-.banner-bg {
+/* 3D MODEL LAYERS */
+.banner-model {
   position: absolute;
   inset: 0;
-  background: url("images/hero-1.jpg") center/cover no-repeat;
-  transition: background-image 0.4s ease;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 1;
+
+  opacity: 0;
+  transition: opacity 0.6s ease;
 }
 
-/* dark overlay */
-.product-banner::after {
-  content: "";
+.banner-model.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+/* DARK OVERLAY */
+.banner-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 3;
 }
 
-/* center text */
+/* CONTENT */
 .banner-content {
   position: relative;
-  z-index: 2;
+  z-index: 4;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  color: #fff;
+  color: #000000;
 }
 
-.banner-content h1 {
-  font-size: clamp(2rem, 4vw, 3.4rem);
-  font-weight: 600;
-  line-height: 1.25;
-  max-width: 820px;
-}
-
-/* button */
+/* BUTTON */
 .banner-btn {
   margin-top: 26px;
   padding: 12px 32px;
@@ -1008,7 +1031,7 @@ body {
   box-shadow: 0 12px 30px rgba(255,106,61,0.45);
 }
 
-/* thumbnails */
+/* THUMBNAILS */
 .banner-thumbs {
   position: absolute;
   bottom: 26px;
@@ -1016,7 +1039,7 @@ body {
   transform: translateX(-50%);
   display: flex;
   gap: 14px;
-  z-index: 3;
+  z-index: 5;
 }
 
 .thumb {
@@ -1043,10 +1066,7 @@ body {
 .thumb.active {
   background: rgba(255,255,255,0.55);
 }
-.site-footer {
-  padding: 4vw;
-  background: #fff;
-}
+
 
 .footer-inner {
   position: relative;
@@ -1259,7 +1279,9 @@ body {
   align-items: center;
 }
 
-
+.outline-img{
+  max-width: 200px;
+}
 .delivery-card {
  
   flex-direction: column;
