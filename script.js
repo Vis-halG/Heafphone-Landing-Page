@@ -2,11 +2,51 @@
 
 window.addEventListener("load", () => {
   const loader = document.getElementById("page-loader");
+  const MIN_DISPLAY = 1500; // keep loader at least this long (ms)
+  const MAX_WAIT = 8000; // safety net (ms) in case model never fires 'load'
+  let hidden = false;
+  const start = Date.now();
 
-  // Minimum loader time (feel premium)
-  setTimeout(() => {
+  function hideLoader() {
+    if (hidden) return;
+    hidden = true;
     loader.classList.add("hide");
-  }, 1500); // 1.5 sec
+  }
+
+  // Use a direct query here to avoid any temporal ordering issues
+  const mainModel = document.querySelector(".showcase__model");
+
+  if (mainModel) {
+    mainModel.addEventListener("load", () => {
+      const elapsed = Date.now() - start;
+      const delay = Math.max(0, MIN_DISPLAY - elapsed);
+      setTimeout(hideLoader, delay);
+    }, { once: true });
+
+    mainModel.addEventListener("error", () => {
+      const elapsed = Date.now() - start;
+      const delay = Math.max(0, MIN_DISPLAY - elapsed);
+      setTimeout(hideLoader, delay);
+      console.warn("Main model failed to load — hiding loader after minimum display time.");
+    }, { once: true });
+  } else {
+    // fallback: hide after minimum display time
+    setTimeout(hideLoader, MIN_DISPLAY);
+  }
+
+  // Safety net: hide after MAX_WAIT no matter what
+  setTimeout(() => {
+    hideLoader();
+    document.body.classList.add("model-load-timeout");
+    console.warn("Loader hidden after timeout waiting for model load.");
+  }, MAX_WAIT);
+
+  // Start resource preloading (kept from original logic)
+  setTimeout(() => {
+    preloadHighPriority();
+    setTimeout(preloadMediumPriority, 1200);
+    setTimeout(preloadLowPriority, 3000);
+  }, 500);
 });
 
 /* =====================================================
@@ -72,13 +112,7 @@ function loadModel(index) {
   }, { once: true });
 }
 
-window.addEventListener("load", () => {
-  setTimeout(() => {
-    preloadHighPriority();
-    setTimeout(preloadMediumPriority, 1200);
-    setTimeout(preloadLowPriority, 3000);
-  }, 500);
-});
+// Preload logic merged into the main 'load' handler above.
 
 prevBtn?.addEventListener("click", () => {
   currentModelIndex =
