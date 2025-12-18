@@ -16,7 +16,40 @@ body {
   background: var(--bg);
   color: var(--dark);
 }
+model-viewer::part(default-progress-bar) {
+  display: none !important;
+}
 
+.story-title {
+  overflow: hidden;
+}
+
+.story-title span {
+  display: inline-block;
+  filter: blur(1px);        /* 🔥 blur kam */
+  opacity: 0.1;             /* thoda readable */
+  transform: translateY(16px); /* softer motion */
+  will-change: filter, opacity, transform;
+}
+
+
+/* MODEL SLIDE ANIMATION STATES */
+.showcase__model {
+  transition: transform 0.7s ease, opacity 0.7s ease;
+  will-change: transform, opacity;
+}
+
+/* old model going up */
+.showcase__model.slide-out {
+  transform: translateY(-80px) scale(0.96);
+  opacity: 0;
+}
+
+/* new model initial state (below) */
+.showcase__model.slide-in {
+  transform: translateY(80px) scale(0.96);
+  opacity: 0;
+}
 
 /* ================= PAGE LOADER ================= */
 #page-loader {
@@ -743,95 +776,74 @@ body {
   background: #ff6a3d;
   color: #fff;
 }
-.testimonials {
-    display: flex;
-    gap: 6vw;
-    padding: 6vw;
+
+.testimonials-grid-layout {
+  padding: 8vw 5vw;
+  background: #fff;
 }
 
-/* LEFT SIDE */
-.testimonials-left {
-    flex: 1;
+.testimonials-header {
+  text-align: center;
+  margin-bottom: 4vw;
 }
 
-.testimonials-left h2 {
-    font-size: 3rem;
+.testimonials-header h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin-bottom: 10px;
 }
 
-.controls {
-    margin-top: 40px;
-    display: flex;
-    gap: 14px;
+.grid-container {
+  display: grid;
+  /* 2 columns for Desktop */
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.controls button {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-}
-
-#next {
-    background: #ff6a3d;
-    color: #fff;
-}
-
-/* RIGHT SIDE (The visible area/viewport) */
-.testimonials-right {
-    flex: 1;
-    height: 420px; /* Crucial fixed height for vertical scrolling */
-    overflow: hidden;
-    position: relative;
-}
-
-/* TRACK (The sliding element) - *FIXED ALIGNMENT* */
-.testimonial-track {
-    position: absolute;
-    /* FIX: Setting top to 0 allows the JavaScript to calculate the 
-       precise initial offset needed to center the first card.
-    */
-    top: 0; 
-    left: 0;
-    width: 100%;
-    transform: translateY(0); /* Initial state, will be set by JS */
-    transition: transform 0.6s ease;
-}
-
-/* CARD */
 .testimonial-card {
-    background: #f6f6f6;
-    border-radius: 20px;
-    padding: 24px;
-    margin: 16px 0; /* Provides the 16px vertical gap between cards */
-
-    /* Inactive states */
-    opacity: 0.35;
-    filter: blur(4px);
-    transform: scale(0.9);
-    transition: all 0.45s ease;
+  background: #f9f9f9;
+  padding: 30px;
+  border-radius: 24px;
+  border: 1px solid #eee;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Active/Centered card state */
-.testimonial-card.active {
-    opacity: 1;
-    filter: blur(0);
-    transform: scale(1);
+.testimonial-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+  background: #fff;
 }
 
-/* AUTHOR DETAILS */
+.testimonial-card p {
+  color: #444;
+  line-height: 1.6;
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
 .author {
-    display: flex;
-    gap: 12px;
-    margin-top: 16px;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 .author img {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.author strong {
+  display: block;
+  font-size: 1rem;
+  color: #000;
+}
+
+.author span {
+  font-size: 0.8rem;
+  color: #888;
 }
 
 .latest {
@@ -1353,4 +1365,21 @@ body {
 .features-section{
   flex-direction: column;
 }
+
+.scroll-instructions {
+    display: block; /* Mobile par dikhega */
+  }
+
+  .testimonial-card {
+    /* Mobile par 2 cards dikhane ke liye width 45% rakhi hai 
+       taaki dusra card thoda visible rahe (peek) */
+    flex: 0 0 45%; 
+    min-width: 200px; /* Choti screens ke liye min-width */
+    padding: 20px;
+  }
+
+  .testimonial-card p {
+    font-size: 0.9rem;
+  }
 }
+

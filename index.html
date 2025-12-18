@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AuraBeats Showcase</title>
 
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
+
     <link rel="stylesheet" href="style.css" />
    
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,8 +16,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Quizlo&family=Schabo+Condensed&display=swap" rel="stylesheet">
 
 
+<script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+<script src="https://unpkg.com/gsap@3/dist/ScrollTrigger.min.js"></script>
 
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
 </head>
 
 <body>
@@ -162,7 +165,8 @@
       <div class="stats-card">
         <div class="icon-box">↗</div>
         <p class="small">Those Who Trust Us</p>
-        <h3>3.2k<span>+</span></h3>
+       <h3 class="count-number" data-count="3200">0<span>+</span></h3>
+
         <p class="muted">Overall Impression</p>
       </div>
     </div>
@@ -301,101 +305,57 @@
 
 </section>
 
-
-<section class="testimonials">
-
-  <!-- LEFT -->
-  <div class="testimonials-left">
-    <h2>What Our<br>Clients Say</h2>
-    <p>
-      From immersive audio to all-day comfort, our
-      headphones deliver a premium experience that
-      keeps users hooked.
-    </p>
-
-    <div class="controls">
-      <button id="prev">↑</button>
-      <button id="next">↓</button>
-    </div>
+<section class="testimonials-grid-layout">
+  <div class="testimonials-header">
+    <h2>What Our Clients Say</h2>
+    <p>Premium experience that keeps users hooked.</p>
   </div>
 
-  <!-- RIGHT -->
-  <div class="testimonials-right">
-    <div class="testimonial-track">
-
-      <div class="testimonial-card active">
-        <p>
-          I’ve used many headphones before, but nothing comes close to the
-          clarity of this one. Every beat feels alive.
-        </p>
-        <div class="author">
-          <img src="images/user1.jpg">
-          <div>
-            <strong>Fauzan Ardhiansyah</strong>
-            <span>HR Manager, Tech Company</span>
-          </div>
+  <div class="grid-container">
+    <div class="testimonial-card">
+      <p>"I’ve used many headphones before, but nothing comes close to the clarity of this one. Every beat feels alive."</p>
+      <div class="author">
+        <img src="images/user1.jpg" alt="User">
+        <div>
+          <strong>Fauzan Ardhiansyah</strong>
+          <span>HR Manager, Tech Company</span>
         </div>
       </div>
-<div class="testimonial-card active">
-        <p>
-          I’ve used many headphones before, but nothing comes close to the
-          clarity of this one. Every beat feels alive.
-        </p>
-        <div class="author">
-          <img src="images/user1.jpg">
-          <div>
-            <strong>Fauzan Ardhiansyah</strong>
-            <span>HR Manager, Tech Company</span>
-          </div>
+    </div>
+
+    <div class="testimonial-card">
+      <p>"Noise cancellation works like magic. I can finally enjoy my playlists without distractions."</p>
+      <div class="author">
+        <img src="images/user2.jpg" alt="User">
+        <div>
+          <strong>Sarah Jenkins</strong>
+          <span>Audio Engineer</span>
         </div>
       </div>
-      <div class="testimonial-card active">
-        <p>
-          I’ve used many headphones before, but nothing comes close to the
-          clarity of this one. Every beat feels alive.
-        </p>
-        <div class="author">
-          <img src="images/user1.jpg">
-          <div>
-            <strong>Fauzan Ardhiansyah</strong>
-            <span>HR Manager, Tech Company</span>
-          </div>
+    </div>
+
+    <div class="testimonial-card">
+      <p>"Studio-quality sound and incredible comfort. Best headphones I’ve ever owned."</p>
+      <div class="author">
+        <img src="images/user3.jpg" alt="User">
+        <div>
+          <strong>Michael Chen</strong>
+          <span>Digital Nomad</span>
         </div>
       </div>
+    </div>
 
-      
-
-      <div class="testimonial-card">
-        <p>
-          Noise cancellation works like magic. I can finally enjoy my
-          playlists without distractions.
-        </p>
-        <div class="author">
-          <img src="images/user2.jpg">
-          <div>
-            <strong>Fauzan Ardhiansyah</strong>
-            <span>HR Manager, Tech Company</span>
-          </div>
+    <div class="testimonial-card">
+      <p>"The battery life is insane. I used them for a whole week of commuting on a single charge."</p>
+      <div class="author">
+        <img src="images/user4.jpg" alt="User">
+        <div>
+          <strong>Ayesha Khan</strong>
+          <span>Graphic Designer</span>
         </div>
       </div>
-
-      <div class="testimonial-card">
-        <p>
-          Studio-quality sound and incredible comfort. Best headphones I’ve
-          ever owned.
-        </p>
-        <div class="author">
-          <img src="images/user3.jpg">
-          <div>
-            <strong>Fauzan Ardhiansyah</strong>
-            <span>HR Manager, Tech Company</span>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
-
 </section>
 
 
@@ -594,8 +554,8 @@
 
     <!-- RIGHT -->
     <div class="footer-right">
-      <span class="phone">+8801632177501</span>
-      <h3>Hello Majarul</h3>
+      <span class="phone">+91 9773146258</span>
+      <h3>Hello Vishal</h3>
 
       <div class="footer-links">
         <ul>

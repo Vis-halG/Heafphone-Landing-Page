@@ -1,66 +1,6 @@
-/* ================= PAGE LOADER CONTROL ================= */
-
-window.addEventListener("load", () => {
-  const loader = document.getElementById("page-loader");
-  const MIN_DISPLAY = 1500; // keep loader at least this long (ms)
-  const MAX_WAIT = 8000; // safety net (ms) in case model never fires 'load'
-  let hidden = false;
-  const start = Date.now();
-
-  function hideLoader() {
-    if (hidden) return;
-    hidden = true;
-    loader.classList.add("hide");
-  }
-
-  // Use a direct query here to avoid any temporal ordering issues
-  const mainModel = document.querySelector(".showcase__model");
-
-  if (mainModel) {
-    mainModel.addEventListener("load", () => {
-      const elapsed = Date.now() - start;
-      const delay = Math.max(0, MIN_DISPLAY - elapsed);
-      setTimeout(hideLoader, delay);
-    }, { once: true });
-
-    mainModel.addEventListener("error", () => {
-      const elapsed = Date.now() - start;
-      const delay = Math.max(0, MIN_DISPLAY - elapsed);
-      setTimeout(hideLoader, delay);
-      console.warn("Main model failed to load — hiding loader after minimum display time.");
-    }, { once: true });
-  } else {
-    // fallback: hide after minimum display time
-    setTimeout(hideLoader, MIN_DISPLAY);
-  }
-
-  // Safety net: hide after MAX_WAIT no matter what
-  setTimeout(() => {
-    hideLoader();
-    document.body.classList.add("model-load-timeout");
-    console.warn("Loader hidden after timeout waiting for model load.");
-  }, MAX_WAIT);
-
-  // Start resource preloading (kept from original logic)
-  setTimeout(() => {
-    preloadHighPriority();
-    setTimeout(preloadMediumPriority, 1200);
-    setTimeout(preloadLowPriority, 3000);
-  }, 500);
-});
-
 /* =====================================================
-   1️⃣ MODEL VIEWER + PRIORITY PRELOADING (TOP PRIORITY)
+   0️⃣ BASIC SELECTORS
 ===================================================== */
-
-const MODELS = [
-  "./model/headphone.glb", // immediate
-  "./model/h1.glb",        // high
-  "./model/h2.glb",        // medium
-  "./model/h3.glb"         // low
-];
-
-let currentModelIndex = 0;
 
 const modelViewer = document.querySelector(".showcase__model");
 const title = document.querySelector(".title");
@@ -68,52 +8,61 @@ const radios = document.querySelectorAll('input[name="modelColor"]');
 const prevBtn = document.querySelector(".next img:first-child");
 const nextBtn = document.querySelector(".next img:last-child");
 
-function preloadHighPriority() {
-  const link = document.createElement("link");
-  link.rel = "preload";
-  link.as = "fetch";
-  link.href = MODELS[1];
-  link.crossOrigin = "anonymous";
-  document.head.appendChild(link);
-}
+/* =====================================================
+   1️⃣ SCREEN LOADER – ONLY MAIN MODEL CONTROLS IT
+===================================================== */
 
-function preloadMediumPriority() {
-  const link = document.createElement("link");
-  link.rel = "prefetch";
-  link.as = "fetch";
-  link.href = MODELS[2];
-  document.head.appendChild(link);
-}
+document.addEventListener("DOMContentLoaded", () => {
 
-function preloadLowPriority() {
-  if ("requestIdleCallback" in window) {
-    requestIdleCallback(() => {
-      const link = document.createElement("link");
-      link.rel = "prefetch";
-      link.as = "fetch";
-      link.href = MODELS[3];
-      document.head.appendChild(link);
-    });
-  }
-}
+  const loader = document.getElementById("page-loader");
+  if (!loader || !modelViewer) return;
+
+  let hidden = false;
+
+  const hideLoader = () => {
+    if (hidden) return;
+    hidden = true;
+    loader.classList.add("hide");
+  };
+
+  // 🔑 Loader hides ONLY when main model loads
+  modelViewer.addEventListener("load", hideLoader, { once: true });
+
+  // Safety fallback
+  setTimeout(hideLoader, 5000);
+});
+
+/* =====================================================
+   2️⃣ MODEL SWITCHING + PRELOAD (BACKGROUND)
+===================================================== */
+
+const MODELS = [
+  "./model/headphone.glb", // already visible
+  "./model/h1.glb",
+  "./model/h2.glb",
+  "./model/h3.glb"
+];
+
+let currentModelIndex = 0;
 
 function loadModel(index) {
   if (!modelViewer) return;
 
-  modelViewer.classList.add("loading");
-  modelViewer.setAttribute("src", MODELS[index]);
+  modelViewer.classList.add("slide-out");
 
-  modelViewer.addEventListener("load", () => {
-    modelViewer.classList.remove("loading");
-  }, { once: true });
+  setTimeout(() => {
+    modelViewer.setAttribute("src", MODELS[index]);
+    modelViewer.classList.remove("slide-out");
+    modelViewer.classList.add("slide-in");
 
-  modelViewer.addEventListener("error", () => {
-    modelViewer.classList.remove("loading");
-  }, { once: true });
+    modelViewer.addEventListener("load", () => {
+      modelViewer.classList.remove("slide-in");
+    }, { once: true });
+
+  }, 300);
 }
 
-// Preload logic merged into the main 'load' handler above.
-
+// Controls
 prevBtn?.addEventListener("click", () => {
   currentModelIndex =
     (currentModelIndex - 1 + MODELS.length) % MODELS.length;
@@ -126,126 +75,270 @@ nextBtn?.addEventListener("click", () => {
   loadModel(currentModelIndex);
 });
 
-radios.forEach(radio => {
-  radio.addEventListener("change", () => {
-    const value = radio.value;
-    modelViewer?.setAttribute("exposure", value);
-
-    if (!title) return;
-    if (value === "1") title.style.color = "#ffffff";
-    if (value === "12") title.style.color = "#282828";
-    if (value === "6") title.style.color = "#3c3c3c";
+// 🔥 Background preload (IDLE)
+requestIdleCallback?.(() => {
+  MODELS.slice(1).forEach(src => {
+    const link = document.createElement("link");
+    link.rel = "prefetch";
+    link.as = "fetch";
+    link.href = src;
+    document.head.appendChild(link);
   });
 });
 
-
 /* =====================================================
-   2️⃣ TESTIMONIAL SLIDER (NON-CRITICAL)
+   3️⃣ EXPOSURE / COLOR RADIO (LIGHT)
 ===================================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+radios.forEach(radio => {
+  radio.addEventListener("change", () => {
+    modelViewer?.setAttribute("exposure", radio.value);
 
-  const cards = document.querySelectorAll(".testimonial-card");
+    if (!title) return;
+    title.style.color =
+      radio.value === "1" ? "#ffffff" :
+      radio.value === "6" ? "#3c3c3c" :
+      "#282828";
+  });
+});
+
+/* =====================================================
+   4️⃣ INFINITE TESTIMONIAL SLIDER
+===================================================== */
+window.addEventListener("load", () => {
   const track = document.querySelector(".testimonial-track");
-  const testimonialsRight = document.querySelector(".testimonials-right");
+  const wrap = document.querySelector(".testimonials-right");
+  let cards = Array.from(document.querySelectorAll(".testimonial-card"));
+  
+  if (!track || !wrap || cards.length === 0) return;
 
-  let testimonialIndex = 0;
+  // 1. INFINITE LOGIC: Clone cards (Shuruat aur end me extra cards add karna)
+  cards.forEach(card => {
+    const clone = card.cloneNode(true);
+    track.appendChild(clone);
+  });
+  // Update cards list after cloning
+  const allCards = document.querySelectorAll(".testimonial-card");
 
-  if (cards.length && track && testimonialsRight) {
-    const cardHeightWithMargin = cards[0].offsetHeight + 16;
-    const containerHeight = testimonialsRight.clientHeight;
-    const cardHeight = cards[0].offsetHeight;
-    const initialOffset = (containerHeight / 2) - (cardHeight / 2);
+  let index = 0;
+  const gap = 16;
+  
+  function updateSlider() {
+    const cardHeight = allCards[0].offsetHeight;
+    const wrapHeight = wrap.clientHeight;
+    
+    // Center point calculation
+    const offset = (wrapHeight / 2) - (cardHeight / 2);
+    const scrollPos = offset - (index * (cardHeight + gap));
+    
+    track.style.transform = `translateY(${scrollPos}px)`;
 
-    function updateTestimonialSlider() {
-      const translateY =
-        initialOffset - testimonialIndex * cardHeightWithMargin;
-      track.style.transform = `translateY(${translateY}px)`;
-
-      cards.forEach((card, i) =>
-        card.classList.toggle("active", i === testimonialIndex)
-      );
-    }
-
-    updateTestimonialSlider();
-
-    document.getElementById("next")?.addEventListener("click", () => {
-      if (testimonialIndex < cards.length - 1) {
-        testimonialIndex++;
-        updateTestimonialSlider();
-      }
-    });
-
-    document.getElementById("prev")?.addEventListener("click", () => {
-      if (testimonialIndex > 0) {
-        testimonialIndex--;
-        updateTestimonialSlider();
+    // 2. UNBLUR CENTER CARD: Check positions
+    allCards.forEach((card, i) => {
+      if (i === index) {
+        card.classList.add("active");
+      } else {
+        card.classList.remove("active");
       }
     });
   }
 
+  // Next Button
+  document.getElementById("next")?.addEventListener("click", () => {
+    index++;
+    if (index >= allCards.length) index = 0; // Reset to start
+    updateSlider();
+  });
+
+  // Prev Button
+  document.getElementById("prev")?.addEventListener("click", () => {
+    index--;
+    if (index < 0) index = allCards.length - 1; // Go to last
+    updateSlider();
+  });
+
+  // 3. AUTO SCROLL (Optional)
+  let autoRun = setInterval(() => {
+    index = (index + 1) % allCards.length;
+    updateSlider();
+  }, 4000); // Har 4 second me change hoga
+
+  // Pause on hover
+  wrap.addEventListener("mouseenter", () => clearInterval(autoRun));
+  wrap.addEventListener("mouseleave", () => {
+    autoRun = setInterval(() => {
+      index = (index + 1) % allCards.length;
+      updateSlider();
+    }, 4000);
+  });
+
+  updateSlider();
+  window.addEventListener("resize", updateSlider);
 });
 
 /* =====================================================
-   4️⃣ FAQ ACCORDION (FEATURES SECTION)
+   5️⃣ FAQ ACCORDION (NON-BLOCKING)
 ===================================================== */
 
-const faqItems = document.querySelectorAll(".faq-item");
+setTimeout(() => {
 
-faqItems.forEach(item => {
-  const header = item.querySelector(".faq-header");
+  document.querySelectorAll(".faq-item").forEach(item => {
+    const header = item.querySelector(".faq-header");
 
-  header.addEventListener("click", () => {
+    header?.addEventListener("click", () => {
 
-    // Close all other items
-    faqItems.forEach(other => {
-      if (other !== item) {
-        other.classList.remove("active");
-        const icon = other.querySelector(".icon");
-        if (icon) icon.textContent = "+";
+      document.querySelectorAll(".faq-item").forEach(other => {
+        if (other !== item) {
+          other.classList.remove("active");
+          other.querySelector(".icon").textContent = "+";
+        }
+      });
+
+      item.classList.toggle("active");
+      const icon = item.querySelector(".icon");
+      if (icon) icon.textContent =
+        item.classList.contains("active") ? "−" : "+";
+    });
+  });
+
+}, 1500);
+
+/* =====================================================
+   6️⃣ PRODUCT THUMB MODEL SWAP (IDLE)
+===================================================== */
+
+requestIdleCallback?.(() => {
+
+  const thumbs = document.querySelectorAll(".thumb");
+  const modelA = document.getElementById("modelA");
+  const modelB = document.getElementById("modelB");
+
+  if (!thumbs.length || !modelA || !modelB) return;
+
+  let current = modelA;
+  let next = modelB;
+
+  thumbs.forEach(thumb => {
+    thumb.addEventListener("click", () => {
+
+      thumbs.forEach(t => t.classList.remove("active"));
+      thumb.classList.add("active");
+
+      next.setAttribute("src", thumb.dataset.model);
+
+      next.addEventListener("load", () => {
+        current.classList.remove("active");
+        next.classList.add("active");
+        [current, next] = [next, current];
+      }, { once: true });
+
+    });
+  });
+
+});
+
+/* =====================================================
+   7️⃣ GSAP STORY TITLE – LAZY LOAD ON SCROLL
+===================================================== */
+
+const storyTitle = document.querySelector(".story-title");
+
+if (storyTitle) {
+
+  const observer = new IntersectionObserver(entries => {
+    if (!entries[0].isIntersecting) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const words = storyTitle.innerText.split(" ");
+    storyTitle.innerHTML = words
+      .map(w => `<span>${w}&nbsp;</span>`)
+      .join("");
+
+    gsap.to(storyTitle.querySelectorAll("span"), {
+      filter: "blur(0px)",
+      opacity: 1,
+      y: 0,
+      stagger: 0.08,
+      scrollTrigger: {
+        trigger: storyTitle,
+        start: "top 85%",
+        end: "top 30%",
+        scrub: true
       }
     });
 
-    // Toggle current
-    item.classList.toggle("active");
+    observer.disconnect();
+  }, { threshold: 0.3 });
 
-    const icon = item.querySelector(".icon");
-    if (icon) {
-      icon.textContent = item.classList.contains("active") ? "−" : "+";
-    }
-  });
-});
+  observer.observe(storyTitle);
+}
+
+
 
 /* =====================================================
-   3️⃣ PRODUCT BANNER THUMB SWITCH (LOW PRIORITY)
+   8️⃣ PRODUCT SECTION – SLOW SCROLL LINKED MOTION
 ===================================================== */
 
-const thumbs = document.querySelectorAll(".thumb");
-const modelA = document.getElementById("modelA");
-const modelB = document.getElementById("modelB");
+const productSection = document.querySelector(".products");
+const productCards = document.querySelectorAll(".product-card");
 
-let current = modelA;
-let next = modelB;
+if (productSection && productCards.length) {
 
-thumbs.forEach(thumb => {
-  thumb.addEventListener("click", () => {
+  gsap.registerPlugin(ScrollTrigger);
 
-    thumbs.forEach(t => t.classList.remove("active"));
-    thumb.classList.add("active");
-
-    const newSrc = thumb.dataset.model;
-
-    // Load new model into hidden layer
-    next.setAttribute("src", newSrc);
-
-    next.addEventListener("load", () => {
-      // Fade swap
-      current.classList.remove("active");
-      next.classList.add("active");
-
-      // Swap references
-      [current, next] = [next, current];
-    }, { once: true });
+  // Initial state (slightly more offset)
+  gsap.set(productCards, {
+    opacity: 0,
+    y: 160,        // ⬅️ movement zyada
+    scale: 0.9
   });
-});
 
+  gsap.to(productCards, {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    ease: "none",  // 🔑 scrub ke sath best
+    stagger: 0.25, // ⬅️ reveal dheere
+    scrollTrigger: {
+      trigger: productSection,
+       start: "top 95%",
+      end: "top 10%",
+      scrub: true         // ⬅️ smooth + slow follow
+      // markers: true
+    }
+  });
+}
+
+
+
+
+/* =====================================================
+   🔢 SCROLL COUNTER (3.2k+) – FIXED & RELIABLE
+===================================================== */
+
+const counterEl = document.querySelector(".count-number");
+
+if (counterEl) {
+  gsap.registerPlugin(ScrollTrigger);
+
+  const finalValue = parseInt(counterEl.dataset.count, 10);
+
+  const counterObj = { value: 0 };
+
+  gsap.to(counterObj, {
+    value: finalValue,
+    duration: 2.5,
+    ease: "power2.out",
+    scrollTrigger: {
+      trigger: counterEl,
+      start: "top 80%",
+      once: true
+    },
+    onUpdate: () => {
+      const val = Math.floor(counterObj.value);
+      counterEl.innerHTML =
+        (val / 1000).toFixed(1) + "k<span>+</span>";
+    }
+  });
+}
