@@ -1,6 +1,6 @@
 :root {
-  --accent: #EF6D58;
-  --bg: #fdf0e9;
+  --accent: #a6b0aa;
+  --bg: #ffffff;
   --dark: #292c3a;
 }
 
@@ -12,9 +12,63 @@
 }
 
 body {
-  font-family: "Poppins", sans-serif;
+   font-family: 'quizlo', sans-serif;
   background: var(--bg);
   color: var(--dark);
+}
+
+
+/* ================= PAGE LOADER ================= */
+#page-loader {
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  z-index: 99999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+#page-loader.hide {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader-inner {
+  text-align: center;
+}
+
+.loader-logo {
+  font-family: 'Schabo Condensed', sans-serif;
+  font-size: 4rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 24px;
+}
+
+.loader-bar {
+  width: 160px;
+  height: 4px;
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.loader-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: #000;
+  animation: loaderMove 1.2s ease-in-out infinite;
+}
+
+@keyframes loaderMove {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
 }
 
 /* ================= SHOWCASE ================= */
@@ -44,11 +98,13 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 15vw;
+  font-weight: 900;
   color: #fff;
   line-height: 1;
   z-index: 15;
 
   display: flex;
+   font-family: 'Schabo Condensed', sans-serif;
 
 }
 
@@ -152,7 +208,7 @@ body {
   max-width: 80vw;
   top: -3vw;
   margin: -6vw auto 0;   /* 🔥 yahi main fix */
-  background: #fff;
+  background:#858585;
   border-radius: 28px;
   display: flex;
   justify-content: space-between;

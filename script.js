@@ -1,3 +1,14 @@
+/* ================= PAGE LOADER CONTROL ================= */
+
+window.addEventListener("load", () => {
+  const loader = document.getElementById("page-loader");
+
+  // Minimum loader time (feel premium)
+  setTimeout(() => {
+    loader.classList.add("hide");
+  }, 1500); // 1.5 sec
+});
+
 /* =====================================================
    1️⃣ MODEL VIEWER + PRIORITY PRELOADING (TOP PRIORITY)
 ===================================================== */
