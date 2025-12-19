@@ -103,78 +103,38 @@ radios.forEach(radio => {
 });
 
 /* =====================================================
-   4️⃣ INFINITE TESTIMONIAL SLIDER
+   9️⃣ TESTIMONIAL SECTION – SCROLL LINKED PREMIUM MOTION
 ===================================================== */
-window.addEventListener("load", () => {
-  const track = document.querySelector(".testimonial-track");
-  const wrap = document.querySelector(".testimonials-right");
-  let cards = Array.from(document.querySelectorAll(".testimonial-card"));
-  
-  if (!track || !wrap || cards.length === 0) return;
 
-  // 1. INFINITE LOGIC: Clone cards (Shuruat aur end me extra cards add karna)
-  cards.forEach(card => {
-    const clone = card.cloneNode(true);
-    track.appendChild(clone);
-  });
-  // Update cards list after cloning
-  const allCards = document.querySelectorAll(".testimonial-card");
+const testimonialSection = document.querySelector(".testimonials-grid-layout");
+const testimonialCards = document.querySelectorAll(".testimonial-card");
 
-  let index = 0;
-  const gap = 16;
-  
-  function updateSlider() {
-    const cardHeight = allCards[0].offsetHeight;
-    const wrapHeight = wrap.clientHeight;
-    
-    // Center point calculation
-    const offset = (wrapHeight / 2) - (cardHeight / 2);
-    const scrollPos = offset - (index * (cardHeight + gap));
-    
-    track.style.transform = `translateY(${scrollPos}px)`;
+if (testimonialSection && testimonialCards.length) {
 
-    // 2. UNBLUR CENTER CARD: Check positions
-    allCards.forEach((card, i) => {
-      if (i === index) {
-        card.classList.add("active");
-      } else {
-        card.classList.remove("active");
-      }
-    });
-  }
+  gsap.registerPlugin(ScrollTrigger);
 
-  // Next Button
-  document.getElementById("next")?.addEventListener("click", () => {
-    index++;
-    if (index >= allCards.length) index = 0; // Reset to start
-    updateSlider();
+  // Initial hidden state
+  gsap.set(testimonialCards, {
+    opacity: 0,
+    y: 140,
+    scale: 0.92
   });
 
-  // Prev Button
-  document.getElementById("prev")?.addEventListener("click", () => {
-    index--;
-    if (index < 0) index = allCards.length - 1; // Go to last
-    updateSlider();
+  gsap.to(testimonialCards, {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    stagger: 0.2,
+    ease: "none",        // scrub ke sath best
+    scrollTrigger: {
+      trigger: testimonialSection,
+      start: "top 90%",
+      end: "top 20%",
+      scrub: true        // 🔥 slow follow effect
+      // markers: true
+    }
   });
-
-  // 3. AUTO SCROLL (Optional)
-  let autoRun = setInterval(() => {
-    index = (index + 1) % allCards.length;
-    updateSlider();
-  }, 4000); // Har 4 second me change hoga
-
-  // Pause on hover
-  wrap.addEventListener("mouseenter", () => clearInterval(autoRun));
-  wrap.addEventListener("mouseleave", () => {
-    autoRun = setInterval(() => {
-      index = (index + 1) % allCards.length;
-      updateSlider();
-    }, 4000);
-  });
-
-  updateSlider();
-  window.addEventListener("resize", updateSlider);
-});
+}
 
 /* =====================================================
    5️⃣ FAQ ACCORDION (NON-BLOCKING)
