@@ -1031,27 +1031,52 @@ model-viewer::part(default-progress-bar) {
 /* ===============================
    PRODUCT BANNER – 3D SWITCH
 ================================ */
+/* ===============================
+   PRODUCT BANNER – VIDEO + 3D
+================================ */
 
 .product-banner {
   position: relative;
   margin: 4vw;
-  height: 85vh;
+  height: min(85vh, 900px);
   border-radius: 28px;
   overflow: hidden;
-  background: #ffffff;
+  isolation: isolate; /* 🔥 z-index issues fix */
 }
 
-/* 3D MODEL LAYERS */
+/* 🎥 VIDEO BACKGROUND */
+.banner-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* DARK OVERLAY (READABILITY) */
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.35),
+    rgba(0,0,0,0.15),
+    rgba(0,0,0,0.45)
+  );
+  z-index: 2;
+}
+
+/* 3D MODELS */
 .banner-model {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  background: transparent;
   z-index: 1;
-
   opacity: 0;
   transition: opacity 0.6s ease;
+  pointer-events: none;
 }
 
 .banner-model.active {
@@ -1059,31 +1084,30 @@ model-viewer::part(default-progress-bar) {
   z-index: 2;
 }
 
-/* DARK OVERLAY */
-.banner-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 3;
-}
-
 /* CONTENT */
 .banner-content {
   position: relative;
-  z-index: 4;
+  z-index: 3;
   height: 100%;
+  padding: 4vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  color: #000000;
+  color: #fff;
+}
+
+.banner-content h1 {
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  line-height: 1.25;
+  max-width: 900px;
 }
 
 /* BUTTON */
 .banner-btn {
-  margin-top: 26px;
-  padding: 12px 32px;
+  margin-top: 24px;
+  padding: 14px 34px;
   border-radius: 999px;
   border: none;
   background: #ff6a3d;
@@ -1091,34 +1115,39 @@ model-viewer::part(default-progress-bar) {
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 12px 30px rgba(255,106,61,0.45);
+  transition: transform 0.3s ease;
+}
+
+.banner-btn:hover {
+  transform: translateY(-3px);
 }
 
 /* THUMBNAILS */
 .banner-thumbs {
   position: absolute;
-  bottom: 26px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   gap: 14px;
-  z-index: 5;
+  z-index: 4;
 }
 
 .thumb {
-  width: 86px;
-  height: 86px;
-  border-radius: 18px;
+  width: 78px;
+  height: 78px;
+  border-radius: 16px;
   background: rgba(255,255,255,0.25);
-  backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  backdrop-filter: blur(8px);
+  display: grid;
+  place-items: center;
   cursor: pointer;
   transition: 0.3s ease;
 }
 
 .thumb img {
   width: 70%;
+  object-fit: contain;
 }
 
 .thumb:hover {
@@ -1126,7 +1155,16 @@ model-viewer::part(default-progress-bar) {
 }
 
 .thumb.active {
-  background: rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.6);
+}
+
+/* ===============================
+   MOBILE OPTIMIZATION
+================================ */
+
+@media (max-width: 767px) {
+
+  
 }
 
 
@@ -1380,6 +1418,59 @@ model-viewer::part(default-progress-bar) {
 
   .testimonial-card p {
     font-size: 0.9rem;
+  }
+
+  /* Banner ko reference banao */
+  .product-banner {
+    position: relative;
+    height: auto;
+    min-height: 80vh;
+    padding-bottom: 120px; /* 🔥 thumbs + button ke liye space */
+  }
+
+  /* Text upar hi rahe */
+  .banner-content {
+    justify-content: flex-start;
+    padding-top: 20vw;
+  }
+
+  /* 🔥 BUTTON KO NICHE FIX KARO */
+  .banner-btn {
+    position: absolute;
+    top: 750px;   /* 👈 thumbs ke upar */
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    z-index: 5;
+  }
+
+   .banner-thumbs {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    gap: 14px;
+
+    max-width: 100%;
+    padding: 0 6vw;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+
+    justify-content: center;   /* 🔥 center alignment */
+  }
+
+  .banner-thumbs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .thumb {
+    flex: 0 0 auto;
+    width: 64px;
+    height: 64px;
   }
 }
 
