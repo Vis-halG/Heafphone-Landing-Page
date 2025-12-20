@@ -13,7 +13,6 @@ const nextBtn = document.querySelector(".next img:last-child");
 ===================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
-
   const loader = document.getElementById("page-loader");
   if (!loader || !modelViewer) return;
 
@@ -25,10 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
     loader.classList.add("hide");
   };
 
-  // 🔑 Loader hides ONLY when main model loads
   modelViewer.addEventListener("load", hideLoader, { once: true });
 
-  // Safety fallback
   setTimeout(hideLoader, 5000);
 });
 
@@ -37,10 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
 ===================================================== */
 
 const MODELS = [
-  "./model/headphone.glb", // already visible
+  "./model/headphone.glb",
   "./model/h1.glb",
   "./model/h2.glb",
-  "./model/h3.glb"
+  "./model/h3.glb",
 ];
 
 let currentModelIndex = 0;
@@ -55,29 +52,28 @@ function loadModel(index) {
     modelViewer.classList.remove("slide-out");
     modelViewer.classList.add("slide-in");
 
-    modelViewer.addEventListener("load", () => {
-      modelViewer.classList.remove("slide-in");
-    }, { once: true });
-
+    modelViewer.addEventListener(
+      "load",
+      () => {
+        modelViewer.classList.remove("slide-in");
+      },
+      { once: true }
+    );
   }, 300);
 }
 
-// Controls
 prevBtn?.addEventListener("click", () => {
-  currentModelIndex =
-    (currentModelIndex - 1 + MODELS.length) % MODELS.length;
+  currentModelIndex = (currentModelIndex - 1 + MODELS.length) % MODELS.length;
   loadModel(currentModelIndex);
 });
 
 nextBtn?.addEventListener("click", () => {
-  currentModelIndex =
-    (currentModelIndex + 1) % MODELS.length;
+  currentModelIndex = (currentModelIndex + 1) % MODELS.length;
   loadModel(currentModelIndex);
 });
 
-// 🔥 Background preload (IDLE)
 requestIdleCallback?.(() => {
-  MODELS.slice(1).forEach(src => {
+  MODELS.slice(1).forEach((src) => {
     const link = document.createElement("link");
     link.rel = "prefetch";
     link.as = "fetch";
@@ -90,15 +86,17 @@ requestIdleCallback?.(() => {
    3️⃣ EXPOSURE / COLOR RADIO (LIGHT)
 ===================================================== */
 
-radios.forEach(radio => {
+radios.forEach((radio) => {
   radio.addEventListener("change", () => {
     modelViewer?.setAttribute("exposure", radio.value);
 
     if (!title) return;
     title.style.color =
-      radio.value === "1" ? "#ffffff" :
-      radio.value === "6" ? "#3c3c3c" :
-      "#282828";
+      radio.value === "1"
+        ? "#ffffff"
+        : radio.value === "6"
+        ? "#3c3c3c"
+        : "#282828";
   });
 });
 
@@ -110,14 +108,12 @@ const testimonialSection = document.querySelector(".testimonials-grid-layout");
 const testimonialCards = document.querySelectorAll(".testimonial-card");
 
 if (testimonialSection && testimonialCards.length) {
-
   gsap.registerPlugin(ScrollTrigger);
 
-  // Initial hidden state
   gsap.set(testimonialCards, {
     opacity: 0,
     y: 140,
-    scale: 0.92
+    scale: 0.92,
   });
 
   gsap.to(testimonialCards, {
@@ -125,14 +121,13 @@ if (testimonialSection && testimonialCards.length) {
     y: 0,
     scale: 1,
     stagger: 0.2,
-    ease: "none",        // scrub ke sath best
+    ease: "none",
     scrollTrigger: {
       trigger: testimonialSection,
       start: "top 90%",
       end: "top 20%",
-      scrub: true        // 🔥 slow follow effect
-      // markers: true
-    }
+      scrub: true,
+    },
   });
 }
 
@@ -141,13 +136,11 @@ if (testimonialSection && testimonialCards.length) {
 ===================================================== */
 
 setTimeout(() => {
-
-  document.querySelectorAll(".faq-item").forEach(item => {
+  document.querySelectorAll(".faq-item").forEach((item) => {
     const header = item.querySelector(".faq-header");
 
     header?.addEventListener("click", () => {
-
-      document.querySelectorAll(".faq-item").forEach(other => {
+      document.querySelectorAll(".faq-item").forEach((other) => {
         if (other !== item) {
           other.classList.remove("active");
           other.querySelector(".icon").textContent = "+";
@@ -156,11 +149,10 @@ setTimeout(() => {
 
       item.classList.toggle("active");
       const icon = item.querySelector(".icon");
-      if (icon) icon.textContent =
-        item.classList.contains("active") ? "−" : "+";
+      if (icon)
+        icon.textContent = item.classList.contains("active") ? "−" : "+";
     });
   });
-
 }, 1500);
 
 /* =====================================================
@@ -168,7 +160,6 @@ setTimeout(() => {
 ===================================================== */
 
 requestIdleCallback?.(() => {
-
   const thumbs = document.querySelectorAll(".thumb");
   const modelA = document.getElementById("modelA");
   const modelB = document.getElementById("modelB");
@@ -178,23 +169,24 @@ requestIdleCallback?.(() => {
   let current = modelA;
   let next = modelB;
 
-  thumbs.forEach(thumb => {
+  thumbs.forEach((thumb) => {
     thumb.addEventListener("click", () => {
-
-      thumbs.forEach(t => t.classList.remove("active"));
+      thumbs.forEach((t) => t.classList.remove("active"));
       thumb.classList.add("active");
 
       next.setAttribute("src", thumb.dataset.model);
 
-      next.addEventListener("load", () => {
-        current.classList.remove("active");
-        next.classList.add("active");
-        [current, next] = [next, current];
-      }, { once: true });
-
+      next.addEventListener(
+        "load",
+        () => {
+          current.classList.remove("active");
+          next.classList.add("active");
+          [current, next] = [next, current];
+        },
+        { once: true }
+      );
     });
   });
-
 });
 
 /* =====================================================
@@ -204,37 +196,37 @@ requestIdleCallback?.(() => {
 const storyTitle = document.querySelector(".story-title");
 
 if (storyTitle) {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (!entries[0].isIntersecting) return;
 
-  const observer = new IntersectionObserver(entries => {
-    if (!entries[0].isIntersecting) return;
+      gsap.registerPlugin(ScrollTrigger);
 
-    gsap.registerPlugin(ScrollTrigger);
+      const words = storyTitle.innerText.split(" ");
+      storyTitle.innerHTML = words
+        .map((w) => `<span>${w}&nbsp;</span>`)
+        .join("");
 
-    const words = storyTitle.innerText.split(" ");
-    storyTitle.innerHTML = words
-      .map(w => `<span>${w}&nbsp;</span>`)
-      .join("");
+      gsap.to(storyTitle.querySelectorAll("span"), {
+        filter: "blur(0px)",
+        opacity: 1,
+        y: 0,
+        stagger: 0.08,
+        scrollTrigger: {
+          trigger: storyTitle,
+          start: "top 85%",
+          end: "top 30%",
+          scrub: true,
+        },
+      });
 
-    gsap.to(storyTitle.querySelectorAll("span"), {
-      filter: "blur(0px)",
-      opacity: 1,
-      y: 0,
-      stagger: 0.08,
-      scrollTrigger: {
-        trigger: storyTitle,
-        start: "top 85%",
-        end: "top 30%",
-        scrub: true
-      }
-    });
-
-    observer.disconnect();
-  }, { threshold: 0.3 });
+      observer.disconnect();
+    },
+    { threshold: 0.3 }
+  );
 
   observer.observe(storyTitle);
 }
-
-
 
 /* =====================================================
    8️⃣ PRODUCT SECTION – SLOW SCROLL LINKED MOTION
@@ -244,34 +236,28 @@ const productSection = document.querySelector(".products");
 const productCards = document.querySelectorAll(".product-card");
 
 if (productSection && productCards.length) {
-
   gsap.registerPlugin(ScrollTrigger);
 
-  // Initial state (slightly more offset)
   gsap.set(productCards, {
     opacity: 0,
-    y: 160,        // ⬅️ movement zyada
-    scale: 0.9
+    y: 160,
+    scale: 0.9,
   });
 
   gsap.to(productCards, {
     opacity: 1,
     y: 0,
     scale: 1,
-    ease: "none",  // 🔑 scrub ke sath best
-    stagger: 0.25, // ⬅️ reveal dheere
+    ease: "none",
+    stagger: 0.25,
     scrollTrigger: {
       trigger: productSection,
-       start: "top 95%",
+      start: "top 95%",
       end: "top 10%",
-      scrub: true         // ⬅️ smooth + slow follow
-      // markers: true
-    }
+      scrub: true,
+    },
   });
 }
-
-
-
 
 /* =====================================================
    🔢 SCROLL COUNTER (3.2k+) – FIXED & RELIABLE
@@ -293,12 +279,23 @@ if (counterEl) {
     scrollTrigger: {
       trigger: counterEl,
       start: "top 80%",
-      once: true
+      once: true,
     },
     onUpdate: () => {
       const val = Math.floor(counterObj.value);
-      counterEl.innerHTML =
-        (val / 1000).toFixed(1) + "k<span>+</span>";
-    }
+      counterEl.innerHTML = (val / 1000).toFixed(1) + "k<span>+</span>";
+    },
   });
 }
+document.getElementById("closeTopBar").onclick = () => {
+  const topBar = document.getElementById("topBar");
+  const navbar = document.querySelector(".navbar");
+
+  topBar.style.display = "none";
+  navbar.style.top = "0";
+};
+
+// 🔥 Mobile menu toggle
+document.getElementById("menuToggle").onclick = () => {
+  document.getElementById("navMenu").classList.toggle("active");
+};
