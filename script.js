@@ -121,10 +121,7 @@ if (testimonialSection && testimonialCards.length) {
     },
   });
 }
-
-/* =====================================================
-   5️⃣ FAQ ACCORDION (NON-BLOCKING)
-===================================================== */
+  //  FAQ ACCORDION (NON-BLOCKING)
 
 setTimeout(() => {
   document.querySelectorAll(".faq-item").forEach((item) => {
@@ -146,9 +143,7 @@ setTimeout(() => {
   });
 }, 1500);
 
-/* =====================================================
-   6️⃣ PRODUCT THUMB MODEL SWAP (IDLE)
-===================================================== */
+  //  PRODUCT THUMB MODEL SWAP (IDLE)
 
 requestIdleCallback?.(() => {
   const thumbs = document.querySelectorAll(".thumb");
@@ -180,9 +175,7 @@ requestIdleCallback?.(() => {
   });
 });
 
-/* =====================================================
-   7️⃣ GSAP STORY TITLE – LAZY LOAD ON SCROLL
-===================================================== */
+  //   GSAP STORY TITLE – LAZY LOAD ON SCROLL
 
 const storyTitle = document.querySelector(".story-title");
 
@@ -219,9 +212,7 @@ if (storyTitle) {
   observer.observe(storyTitle);
 }
 
-/* =====================================================
-   8️⃣ PRODUCT SECTION – SLOW SCROLL LINKED MOTION
-===================================================== */
+  //  PRODUCT SECTION – SLOW SCROLL LINKED MOTION
 
 const productSection = document.querySelector(".products");
 const productCards = document.querySelectorAll(".product-card");
@@ -250,9 +241,7 @@ if (productSection && productCards.length) {
   });
 }
 
-/* =====================================================
-   🔢 SCROLL COUNTER (3.2k+) – FIXED & RELIABLE
-===================================================== */
+  // SCROLL COUNTER (3.2k+) – FIXED & RELIABLE
 
 const counterEl = document.querySelector(".count-number");
 
@@ -286,7 +275,7 @@ document.getElementById("closeTopBar").onclick = () => {
   navbar.style.top = "0";
 };
 
-// 🔥 Mobile menu toggle
+//  Mobile menu toggle
 document.getElementById("menuToggle").onclick = () => {
   document.getElementById("navMenu").classList.toggle("active");
 };
