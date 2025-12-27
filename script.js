@@ -1,6 +1,4 @@
-/* =====================================================
-   0️⃣ BASIC SELECTORS
-===================================================== */
+
 
 const modelViewer = document.querySelector(".showcase__model");
 const title = document.querySelector(".title");
@@ -8,9 +6,8 @@ const radios = document.querySelectorAll('input[name="modelColor"]');
 const prevBtn = document.querySelector(".next img:first-child");
 const nextBtn = document.querySelector(".next img:last-child");
 
-/* =====================================================
-   1️⃣ SCREEN LOADER – ONLY MAIN MODEL CONTROLS IT
-===================================================== */
+
+  //  SCREEN LOADER – ONLY MAIN MODEL CONTROLS IT
 
 document.addEventListener("DOMContentLoaded", () => {
   const loader = document.getElementById("page-loader");
@@ -29,9 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setTimeout(hideLoader, 5000);
 });
 
-/* =====================================================
-   2️⃣ MODEL SWITCHING + PRELOAD (BACKGROUND)
-===================================================== */
+  //  MODEL SWITCHING + PRELOAD (BACKGROUND)
 
 const MODELS = [
   "./model/headphone.glb",
@@ -82,9 +77,7 @@ requestIdleCallback?.(() => {
   });
 });
 
-/* =====================================================
-   3️⃣ EXPOSURE / COLOR RADIO (LIGHT)
-===================================================== */
+  //  EXPOSURE / COLOR RADIO (LIGHT)
 
 radios.forEach((radio) => {
   radio.addEventListener("change", () => {
@@ -100,9 +93,7 @@ radios.forEach((radio) => {
   });
 });
 
-/* =====================================================
-   9️⃣ TESTIMONIAL SECTION – SCROLL LINKED PREMIUM MOTION
-===================================================== */
+  //  TESTIMONIAL SECTION – SCROLL LINKED PREMIUM MOTION/
 
 const testimonialSection = document.querySelector(".testimonials-grid-layout");
 const testimonialCards = document.querySelectorAll(".testimonial-card");
